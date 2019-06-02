@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>HTML5 Server Side Event Example in Go</title>
+</head>
+<body>
+	<script type="text/javascript">
+	    // Create a new HTML5 EventSource
+	    var source = new EventSource('/event?channel=fllsdasdasd');
+	    // Create a callback for when a new message is received.
+        let dump = []
+        source.onmessage = function(e) {
+            // Append the `data` attribute of the message to the DOM.
+            // console.log(e.data, typeof(e.data))
+            // document.body.innerHTML += e.data + '<br>';
+            if (e.data == "Connected") return
+
+            msg = JSON.parse(e.data)
+            msg.recieved_time = Date.now()
+            dump.push(msg)
+            if(dump.length == 3000) {
+                saveText(JSON.stringify(dump), "dump.json" );
+                dump = []
+                // source.close();
+            }
+        };
+        function saveText(text, filename){
+            var a = document.createElement('a');
+            a.setAttribute('href', 'data:text/plain;charset=utf-u,'+encodeURIComponent(text));
+            a.setAttribute('download', filename);
+            a.click()
+        }
+	</script>
+</body>
+</html>

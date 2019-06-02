@@ -1,0 +1,5 @@
+https://github.com/confluentinc/confluent-kafka-go
+github.com/janberktold/sse
+
+# to listen hit
+http://localhost:7800/event?channel=fllsdasdasd
