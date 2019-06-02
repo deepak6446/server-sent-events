@@ -27,10 +27,10 @@ func main() {
 
 func Listener(w http.ResponseWriter, r *http.Request) {
 		
-	fmt.Println("new connection", "GET params were:", r.URL.Query()["channel"][0])
-	c := kafkaListener("deepak")
-	// get a SSE connection from the HTTP request
-	// in a real world situation, you should look for the error (second return value)
+	channel := r.URL.Query()["channel"][0]
+	fmt.Println("new connection", "GET params were:", channel)
+	c := kafkaListener(channel)
+	
 	conn, _ := sse.Upgrade(w, r)
 
 	// write a plain string
@@ -39,32 +39,25 @@ func Listener(w http.ResponseWriter, r *http.Request) {
 	for {
 		msg, err := c.ReadMessage(-1)
 		if err == nil {
-			// fmt.Println("----------message: ", msg)
-			// fmt.Println("Message on %s: %s\n", msg.TopicPartition, msg.Value)
-			// fmt.Println("----------------------%+v\n", msg.Value)
-			// fmt.Println("_____+++++++type %#v", msg.Value)
-			// fmt.Println("----------------999 string", string(msg.Value))
 			var bo interface{} 
 			mErr := json.Unmarshal(msg.Value, &bo)
 			if mErr != nil {
 				fmt.Println(mErr)
 			}
-			// fmt.Println("bo==================", bo)
-			// conn.WriteString(string(msg.Value))
 			conn.WriteJson(bo)
+			fmt.Println("Log:", bo)
 		} else {
 			// The client will automatically try to recover from all errors.
 			fmt.Printf("Consumer error: %v (%v)\n", err, msg)
 		}
 	}
-
 	c.Close()
 
 }
 
 func kafkaListener(topics string) *kafka.Consumer {
 	
-	topics = "testTopic"
+	// topics = "testTopic"
 
 	c, err := kafka.NewConsumer(&kafka.ConfigMap{
 		"bootstrap.servers": "localhost:9092",
@@ -86,9 +79,6 @@ func kafkaListener(topics string) *kafka.Consumer {
 
 func handler(w http.ResponseWriter, r *http.Request) {
 
-	// Did you know Golang's ServeMux matches only the
-	// prefix of the request URL?  It's true.  Here we
-	// insist the path is just "/".
 	if r.URL.Path != "/" {
 		w.WriteHeader(http.StatusNotFound)
 		return

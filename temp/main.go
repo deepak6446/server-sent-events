@@ -42,7 +42,7 @@ func main() {
 	http.Handle("/", http.FileServer(http.Dir("client")))
 	// register RESTful handler for '/sse/dashboard'
 	http.HandleFunc("/sse/dashboard", dashbaordHandler)
-	fmt.Printf("listening")
+	fmt.Printf("listening on 8080")
 	log.Fatal(http.ListenAndServe(":8080", nil))
 }
 
@@ -65,7 +65,7 @@ func dashbaordHandler(w http.ResponseWriter, r *http.Request) {
 	// fmt.Printf("data: %v\n", buf.String())
 }
 func updateDashboard() {
-	for {
+	// for {
 		inv := updateInventory()
 		db := &DashBoard{
 			Users:         uint(rand.Uint32()),
@@ -76,7 +76,7 @@ func updateDashboard() {
 		}
 		time.Sleep(1000 * time.Millisecond)
 		dashboard <- db
-	}
+	// }
 }
 func updateInventory() *Store {
 	inv := &Store{}
