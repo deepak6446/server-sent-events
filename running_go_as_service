@@ -1,0 +1,14 @@
+[Unit]
+Description=CAAS_SERVICE
+
+[Service]
+WorkingDirectory=/home/jugaad/Desktop/serverSentEvent/
+ExecStart=/home/jugaad/Desktop/serverSentEvent/bin/main
+ExecReload=/home/jugaad/Desktop/serverSentEvent/bin/main
+KillMode=process
+Restart=always
+RestartPreventExitStatus=255
+Type=simple
+
+[Install]
+WantedBy=multi-user.target
